@@ -1,5 +1,6 @@
 from app.ml.nlp import process_text, get_sentences
 from app.ml.action_extractor import filter_action_items
+from app.ml.entity_extractor import extract_details
 
 
 def run():
@@ -16,15 +17,23 @@ def run():
     doc = process_text(text)
     sentences = get_sentences(doc)
 
-    print("---- ALL SENTENCES ----")
+    print("\n---- ALL SENTENCES ----")
     for s in sentences:
         print(s)
 
-    print("---- ACTION ITEMS ----")
+    print("\n---- ACTION ITEMS ----")
     actions = filter_action_items(sentences)
 
+    structured = []
+
     for a in actions:
-        print(a)
+        result = extract_details(a)
+        structured.append(result)
+    
+    print("\n---- STRUCTURED OUTPUT ----")
+    for item in structured:
+        print(item)
+   
 
 if __name__ == "__main__":
     run()
