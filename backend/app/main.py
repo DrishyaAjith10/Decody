@@ -73,15 +73,25 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.post("/search")
 def search(request: TranscriptRequest):
-    text = request.text
+    text = clean_transcript(request.text)
 
     doc = process_text(text)
     sentences = get_sentences(doc)
 
+    if not sentences:
+        return {"results": []}
+
     embeddings = build_embeddings(sentences)
 
-    query = "What are the action items?"  # later dynamic
+    query = "action items"
 
-    results = retrieve(query, sentences, embeddings, top_k=3)
+    results = retrieve(query, sentences, embeddings)
 
-    return {"results": results}
+    structured = []
+
+    for item in results:
+        sentence = item["sentence"]
+        extracted = extract_details(sentence)
+        structured.append(extracted)
+
+    return {"results": structured}
