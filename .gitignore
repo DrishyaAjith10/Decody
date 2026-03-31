@@ -20,5 +20,8 @@ venv/
 # Model files (optional)
 *.model
 
-# Data files (if sensitive later)
+# HuggingFace cache (optional)
+.cache/
+
+# Data (optional if sensitive later)
 data/*
