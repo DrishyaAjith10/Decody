@@ -50,3 +50,25 @@ John will prepare the project report by Friday.
 
 Output:
 ✔ Action Item Detected
+
+## 🚀 Features Implemented
+
+- Action Item Detection using semantic similarity (MiniLM)
+- Entity Extraction (Who, What, When)
+- FastAPI backend for processing
+- CSV export functionality
+
+## 🔗 API Endpoints
+
+### POST /analyze
+Returns structured action items
+
+### POST /export
+Downloads results as CSV file
+
+## 📊 Example Output
+
+| Who  | What                        | When       |
+|------|-----------------------------|------------|
+| John | prepare project report      | Friday     |
+| Sarah| finalize UI design          | next week  |

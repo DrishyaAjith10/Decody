@@ -41,3 +41,52 @@ Transcript
   - Who (PERSON)
   - What (Task)
   - When (DATE)
+
+
+## Step 3: API Development
+
+- Built FastAPI backend
+- Created /analyze endpoint
+- Returns structured action items in JSON format
+
+## Result
+System is now accessible via API and ready for frontend integration
+
+
+## Step 4: Structured Extraction
+
+- Extracted:
+  - Who (PERSON)
+  - What (Task description)
+  - When (DATE)
+- Used spaCy for entity recognition
+- Applied rule-based cleaning for task extraction
+
+## Step 5: API Development
+
+- Built FastAPI backend
+- Created endpoints:
+  - `/analyze` → returns structured JSON
+  - `/export` → downloads CSV file
+
+## Step 6: Export Feature
+
+- Implemented CSV export functionality
+- Converted structured data into tabular format
+- Enabled file download via API
+
+## Final Pipeline
+
+Transcript  
+→ Sentence Splitting (spaCy)  
+→ Action Detection (MiniLM)  
+→ Entity Extraction (spaCy)  
+→ Structured Output  
+→ API Response / CSV Export
+
+## Result
+
+The system successfully:
+- Identifies action items
+- Extracts responsible person, task, and deadline
+- Provides output in both JSON and downloadable formats

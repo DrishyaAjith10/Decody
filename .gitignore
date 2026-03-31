@@ -22,6 +22,7 @@ venv/
 
 # HuggingFace cache (optional)
 .cache/
+~.cache/
 
 # Data (optional if sensitive later)
 data/*
