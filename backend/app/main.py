@@ -12,11 +12,16 @@ from fastapi.responses import Response
 from app.utils.export import convert_to_csv
 from app.ml.retriever import build_embeddings, retrieve
 from app.utils.cleaner import clean_transcript
+from app.ml.decision_extractor import is_decision
 
 app = FastAPI()
 
 class TranscriptRequest(BaseModel):
     text: str
+
+class SearchRequest(BaseModel):
+    text: str
+    query: str
 
 from fastapi.responses import FileResponse
 
@@ -72,8 +77,9 @@ from fastapi.staticfiles import StaticFiles
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.post("/search")
-def search(request: TranscriptRequest):
+def search(request: SearchRequest):
     text = clean_transcript(request.text)
+    query = request.query.lower()
 
     doc = process_text(text)
     sentences = get_sentences(doc)
@@ -83,15 +89,26 @@ def search(request: TranscriptRequest):
 
     embeddings = build_embeddings(sentences)
 
-    query = "action items"
-
     results = retrieve(query, sentences, embeddings)
 
     structured = []
 
+    is_action_query = "action" in query or "task" in query
+    is_decision_query = "decision" in query or "decide" in query
+
     for item in results:
         sentence = item["sentence"]
-        extracted = extract_details(sentence)
-        structured.append(extracted)
+
+        if is_action_query:
+            structured.append(extract_details(sentence))
+
+        elif is_decision_query:
+            if is_decision(sentence):
+                structured.append({
+                    "decision": sentence
+                })
+
+    if not structured:
+        return {"results": []}
 
     return {"results": structured}
