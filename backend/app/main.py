@@ -10,20 +10,24 @@ from app.ml.action_extractor import filter_action_items
 from app.ml.entity_extractor import extract_details
 from fastapi.responses import Response
 from app.utils.export import convert_to_csv
+from app.ml.retriever import build_embeddings, retrieve
+from app.utils.cleaner import clean_transcript
 
 app = FastAPI()
 
 class TranscriptRequest(BaseModel):
     text: str
 
+from fastapi.responses import FileResponse
+
 @app.get("/")
-def root():
-    return {"message": "Decody API is running"}
+def serve_home():
+    return FileResponse("app/static/index.html")
 
 
 @app.post("/analyze")
 def analyze_transcript(request: TranscriptRequest):
-    text = request.text
+    text = clean_transcript(request.text)
     """
     Analyze transcript and return structured action items
     """
@@ -43,7 +47,7 @@ def analyze_transcript(request: TranscriptRequest):
 
 @app.post("/export")
 def export(request: TranscriptRequest):
-    text = request.text
+    text = clean_transcript(request.text)
     doc = process_text(text)
     sentences = get_sentences(doc)
     actions = filter_action_items(sentences)
@@ -65,4 +69,19 @@ def export(request: TranscriptRequest):
 
 from fastapi.staticfiles import StaticFiles
 
-app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+@app.post("/search")
+def search(request: TranscriptRequest):
+    text = request.text
+
+    doc = process_text(text)
+    sentences = get_sentences(doc)
+
+    embeddings = build_embeddings(sentences)
+
+    query = "What are the action items?"  # later dynamic
+
+    results = retrieve(query, sentences, embeddings, top_k=3)
+
+    return {"results": results}
