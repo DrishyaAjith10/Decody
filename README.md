@@ -1,74 +1,171 @@
-# Decody
+# Decody — Meeting Intelligence System
 
-Decody is an intelligent system designed to analyze meeting transcripts and extract meaningful insights such as action items and decisions.
+Decody is a lightweight Meeting Intelligence System that processes meeting transcripts and extracts meaningful insights such as **Action Items** and **Decisions** using a hybrid NLP approach.
 
-## 🚀 Problem
-Meeting transcripts are long and unstructured, making it difficult to quickly identify key decisions and assigned tasks.
+---
 
-## 💡 Solution
-Decody processes transcripts using NLP techniques to:
-- Identify action items
-- Extract responsible person (Who)
-- Extract task description (What)
-- Extract deadlines (By When)
+## 🚀 Features
 
-## 🧠 Current Features
-- Sentence segmentation
-- Named Entity Recognition (NER) using spaCy
-- Structured extraction of PERSON and DATE entities
+* Extracts **Action Items** (Who, What, By When)
+* Identifies **Decisions** from discussions
+* Semantic **Search using MiniLM embeddings**
+* Handles **messy transcripts** (timestamps, fillers, speaker tags)
+* Export results as **CSV**
+* Query-based retrieval (e.g., “action items”, “decisions”)
 
-## 🏗️ Tech Stack
-- Python
-- spaCy (NLP)
-- Sentence Transformers (for semantic understanding - upcoming)
-- FastAPI (planned)
-- React (planned)
-- Supabase (planned)
+---
 
-## 🔄 Pipeline (Current)
-Transcript → NLP Processing → Sentences + Entities
+## 🧠 System Architecture
 
-## 🔮 Future Scope
-- Action item detection using semantic models
-- Decision extraction
-- Question-answering over transcripts
-- Export to CSV/PDF
+Decody follows a hybrid NLP pipeline:
 
+```
+Transcript
+   ↓
+Cleaning (remove noise, timestamps)
+   ↓
+Sentence Segmentation (spaCy)
+   ↓
+Embedding (MiniLM)
+   ↓
+Semantic Retrieval
+   ↓
+Extraction (Rule-based NLP)
+   ↓
+Structured Output
+```
 
+---
 
-## ✅ Current Progress
+## ⚙️ Tech Stack
 
-Decody can now:
-- Identify action items from meeting transcripts
-- Use semantic similarity (MiniLM)
-- Extract meaningful sentences from unstructured text
+* **Backend:** FastAPI
+* **NLP:** spaCy
+* **Embeddings:** Sentence Transformers (MiniLM)
+* **Frontend:** HTML + JavaScript
+* **Export:** CSV
 
-### Example Output
+---
 
-Input:
-John will prepare the project report by Friday.
+## 🔍 How It Works
 
-Output:
-✔ Action Item Detected
+### 1. Cleaning
 
-## 🚀 Features Implemented
+Removes:
 
-- Action Item Detection using semantic similarity (MiniLM)
-- Entity Extraction (Who, What, When)
-- FastAPI backend for processing
-- CSV export functionality
+* timestamps
+* speaker labels
+* filler words
 
-## 🔗 API Endpoints
+---
 
-### POST /analyze
-Returns structured action items
+### 2. Retrieval (MiniLM)
 
-### POST /export
-Downloads results as CSV file
+* Converts sentences into embeddings
+* Matches query with relevant sentences using cosine similarity
 
-## 📊 Example Output
+---
 
-| Who  | What                        | When       |
-|------|-----------------------------|------------|
-| John | prepare project report      | Friday     |
-| Sarah| finalize UI design          | next week  |
+### 3. Extraction
+
+#### Action Items
+
+* Detects tasks using semantic similarity + rules
+* Extracts:
+
+  * **Who**
+  * **What**
+  * **When**
+
+#### Decisions
+
+* Identifies sentences with keywords like:
+
+  * "agreed"
+  * "decided"
+  * "approved"
+
+---
+
+### 4. Output
+
+Returns:
+
+```json
+{
+  "action_items": [...],
+  "decisions": [...]
+}
+```
+
+---
+
+## 🧪 Example
+
+### Input:
+
+```
+John will prepare the report by Friday.
+The team agreed to revise pricing.
+```
+
+### Output:
+
+```json
+{
+  "action_items": [
+    {
+      "who": "John",
+      "what": "prepare the report",
+      "when": "Friday"
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "The team agreed to revise pricing."
+    }
+  ]
+}
+```
+
+---
+
+## 📡 API Endpoints
+
+### `/analyze`
+
+Extracts action items from transcript
+
+### `/search`
+
+Query-based retrieval + extraction
+
+### `/export`
+
+Exports results as CSV
+
+---
+
+## ⚠️ Design Principles
+
+* Avoid heavy reliance on LLMs
+* Use embeddings for efficiency
+* Keep system modular and scalable
+* Process only relevant data (retrieval-first approach)
+
+---
+
+## 🚀 Future Improvements
+
+* Add conversational chatbot (RAG)
+* Improve decision detection using ML models
+* Multi-file transcript support
+* UI enhancements and visualization
+
+---
+
+## 👩‍💻 Author
+
+Drishya Ajith
+Computer Science Engineering Student
+Builder of slightly chaotic but functional systems

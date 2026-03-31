@@ -75,18 +75,75 @@ System is now accessible via API and ready for frontend integration
 - Converted structured data into tabular format
 - Enabled file download via API
 
+
+🔧 Step 7: Semantic Search Integration
+Implemented MiniLM-based semantic retrieval
+Converted transcript sentences into vector embeddings
+Enabled query-based retrieval of relevant sentences
+Used cosine similarity to rank importance
+
+🧠 Step 8: Query-Based Insight Extraction
+Added /search endpoint
+Accepts:
+transcript text
+user query (e.g., "action items", "decisions")
+Retrieves only relevant sentences before processing
+Improves efficiency and accuracy
+
+⚖️ Step 9: Decision Extraction
+Implemented rule-based decision detection
+Identifies sentences containing:
+"agreed", "decided", "approved", etc.
+Cleans and normalizes decision statements
+Outputs structured decisions separately from tasks
+
+🔀 Step 10: Multi-Output System
+System now returns:
+action_items
+decisions
+Avoids forcing all sentences into one category
+Handles empty cases gracefully
+
+🎨 Step 11: Frontend Integration
+Built UI using HTML, CSS, and JavaScript
+Added:
+transcript input
+query input
+structured results display
+Separated:
+Action Items (table)
+Decisions (list)
+
+
 ## Final Pipeline
 
 Transcript  
+→ Cleaning  
 → Sentence Splitting (spaCy)  
-→ Action Detection (MiniLM)  
-→ Entity Extraction (spaCy)  
+→ Embedding (MiniLM)  
+→ Semantic Retrieval (Query-based)  
+→ Action Extraction (spaCy + rules)  
+→ Decision Extraction (rule-based)  
 → Structured Output  
-→ API Response / CSV Export
+→ API Response / CSV Export  
+→ UI Display
 
 ## Result
 
 The system successfully:
-- Identifies action items
-- Extracts responsible person, task, and deadline
-- Provides output in both JSON and downloadable formats
+
+- Identifies action items with:
+  - responsible person
+  - task
+  - deadline
+
+- Detects and extracts key decisions from discussions
+
+- Uses semantic search to retrieve relevant transcript segments
+
+- Supports query-based interaction for dynamic insights
+
+- Provides output in:
+  - structured JSON
+  - downloadable CSV
+  - user-friendly UI
