@@ -3,7 +3,7 @@ Decody API
 
 Provides endpoint to extract action items from transcript.
 """
-
+from pydantic import BaseModel
 from fastapi import FastAPI
 from app.ml.nlp import process_text, get_sentences
 from app.ml.action_extractor import filter_action_items
@@ -13,6 +13,8 @@ from app.utils.export import convert_to_csv
 
 app = FastAPI()
 
+class TranscriptRequest(BaseModel):
+    text: str
 
 @app.get("/")
 def root():
@@ -20,7 +22,8 @@ def root():
 
 
 @app.post("/analyze")
-def analyze_transcript(text: str):
+def analyze_transcript(request: TranscriptRequest):
+    text = request.text
     """
     Analyze transcript and return structured action items
     """
@@ -39,7 +42,8 @@ def analyze_transcript(text: str):
     }
 
 @app.post("/export")
-def export(text: str):
+def export(request: TranscriptRequest):
+    text = request.text
     doc = process_text(text)
     sentences = get_sentences(doc)
     actions = filter_action_items(sentences)
@@ -58,3 +62,7 @@ def export(text: str):
             "Content-Disposition": "attachment; filename=decody_output.csv"
         }
     )
+
+from fastapi.staticfiles import StaticFiles
+
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")

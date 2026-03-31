@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Decody</title>
+</head>
+<body>
+
+    <h2>Decody - Meeting Analyzer</h2>
+
+    <textarea id="inputText" rows="8" cols="60" placeholder="Paste transcript here..."></textarea>
+    <br><br>
+
+    <button onclick="analyze()">Analyze</button>
+
+    <h3>Results</h3>
+
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Who</th>
+                <th>What</th>
+                <th>When</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTable"></tbody>
+    </table>
+
+    <script>
+        async function analyze() {
+            const text = document.getElementById("inputText").value;
+            const table = document.getElementById("resultsTable");
+
+            // loading state
+            table.innerHTML = "<tr><td colspan='3'>Analyzing...</td></tr>";
+
+            const response = await fetch("http://127.0.0.1:8000/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text })
+            });
+
+            const data = await response.json();
+
+            table.innerHTML = "";
+
+            if (!data.action_items || data.action_items.length === 0) {
+                table.innerHTML = "<tr><td colspan='3'>No action items found</td></tr>";
+                return;
+            }
+
+            data.action_items.forEach(item => {
+                const row = `<tr>
+                    <td>${item.who || "N/A"}</td>
+                    <td>${item.what || "N/A"}</td>
+                    <td>${item.when || "N/A"}</td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+    </script>
+
+</body>
+</html>
