@@ -1,4 +1,9 @@
-def is_decision(sentence: str):
+import re
+
+
+def extract_decision(sentence: str):
+    sentence_lower = sentence.lower()
+
     keywords = [
         "agreed",
         "decided",
@@ -11,6 +16,17 @@ def is_decision(sentence: str):
         "going with"
     ]
 
-    sentence_lower = sentence.lower()
+    if not any(k in sentence_lower for k in keywords):
+        return None
 
-    return any(k in sentence_lower for k in keywords)
+    # Try to extract core decision
+    decision = sentence
+
+    # Clean phrases
+    decision = re.sub(r"(the team|we)\s+(have\s+)?(agreed|decided|concluded)\s+(to)?", "", decision, flags=re.IGNORECASE)
+
+    decision = decision.strip().capitalize()
+
+    return {
+        "decision": decision
+    }

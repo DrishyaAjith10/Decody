@@ -12,7 +12,7 @@ from fastapi.responses import Response
 from app.utils.export import convert_to_csv
 from app.ml.retriever import build_embeddings, retrieve
 from app.utils.cleaner import clean_transcript
-from app.ml.decision_extractor import is_decision
+from app.ml.decision_extractor import extract_decision
 
 app = FastAPI()
 
@@ -85,30 +85,30 @@ def search(request: SearchRequest):
     sentences = get_sentences(doc)
 
     if not sentences:
-        return {"results": []}
+        return {"action_items": [], "decisions": []}
 
     embeddings = build_embeddings(sentences)
 
     results = retrieve(query, sentences, embeddings)
 
-    structured = []
-
-    is_action_query = "action" in query or "task" in query
-    is_decision_query = "decision" in query or "decide" in query
+    action_items = []
+    decisions = []
 
     for item in results:
         sentence = item["sentence"]
 
-        if is_action_query:
-            structured.append(extract_details(sentence))
+        # Action detection
+        extracted = extract_details(sentence)
+        if extracted and extracted.get("who"):
+            action_items.append(extracted)
 
-        elif is_decision_query:
-            if is_decision(sentence):
-                structured.append({
-                    "decision": sentence
-                })
+        # Decision detection
+        decision_data = extract_decision(sentence)
 
-    if not structured:
-        return {"results": []}
+        if decision_data:
+            decisions.append(decision_data)
 
-    return {"results": structured}
+        return {
+            "action_items": action_items,
+            "decisions": decisions
+        }

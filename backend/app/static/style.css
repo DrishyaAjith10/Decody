@@ -1,0 +1,43 @@
+body {
+    font-family: Arial;
+    margin: 40px;
+}
+
+textarea {
+    width: 100%;
+}
+
+h2 {
+    color: #222;
+}
+
+h3 {
+    color: #444;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
