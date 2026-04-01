@@ -1,50 +1,42 @@
-"""
-entity_extractor.py
-
-Extracts structured information (Who, What, When)
-from action-item sentences.
-"""
-
 from app.ml.nlp import process_text
-
+import re
 
 def extract_details(sentence: str):
-    """
-    Extract who, what, and when from a sentence.
 
-    Args:
-        sentence (str)
-
-    Returns:
-        dict
-    """
-
-    doc = process_text(sentence)
 
     who = None
     when = None
 
-    # Extract entities
+    # 🔥 HANDLE "John: ..."
+    if ":" in sentence:
+        parts = sentence.split(":", 1)
+        who = parts[0].strip()
+        sentence = parts[1].strip()
+
+    doc = process_text(sentence)
+
+    # 🔥 Extract DATE
     for ent in doc.ents:
-        if ent.label_ == "PERSON":
-            who = ent.text
-        elif ent.label_ == "DATE":
+        if ent.label_ == "DATE":
             when = ent.text
 
-    # Extract WHAT (basic logic)
+    # 🔥 Clean WHAT
     what = sentence
 
-    # Remove who and when from sentence
-    if who:
-        what = what.replace(who, "").strip()
-
     if when:
-        what = what.replace(when, "").strip()
+        what = what.replace(when, "")
 
-    # Clean extra words
-    what = what.replace("by", "").strip()
-    what = what.replace("will", "").strip()
-    what = what.replace("needs to", "").strip()
+    # remove helper words
+    what = re.sub(r"\b(will|should|needs to|have to|by)\b", "", what, flags=re.IGNORECASE)
+
+    # 🔥 remove trailing prepositions (VERY IMPORTANT)
+    what = re.sub(r"\b(on|at|by|for|to)\s*$", "", what, flags=re.IGNORECASE)
+
+    # normalize spacing
+    what = " ".join(what.split()).strip()
+
+    # remove trailing punctuation
+    what = what.rstrip(".,!?")
 
     return {
         "who": who,

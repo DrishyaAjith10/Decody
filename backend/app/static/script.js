@@ -44,3 +44,33 @@ async function analyze() {
         });
     }
 }
+
+async function uploadFile() {
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Please select a file.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://127.0.0.1:8000/upload", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    console.log("UPLOAD RESPONSE:", data);  // 🔥 DEBUG
+
+    if (!data.text) {
+        alert("No text returned from backend");
+        return;
+    }
+
+    document.getElementById("inputText").value = data.text;
+
+    analyze();
+}
