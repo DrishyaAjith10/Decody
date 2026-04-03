@@ -144,14 +144,6 @@ Query-based retrieval + extraction
 
 Exports results as CSV
 
----
-
-## ⚠️ Design Principles
-
-* Avoid heavy reliance on LLMs
-* Use embeddings for efficiency
-* Keep system modular and scalable
-* Process only relevant data (retrieval-first approach)
 
 ---
 
@@ -167,5 +159,4 @@ Exports results as CSV
 ## 👩‍💻 Author
 
 Drishya Ajith
-Computer Science Engineering Student
-Builder of slightly chaotic but functional systems
+
